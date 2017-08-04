@@ -1,0 +1,27 @@
+{
+  "manifest_version": 2,
+  "short_name" : "Twitch Tool",
+  "name": "Twitch Tool - Alert - Navigation",
+  "description": "Track your favorite streamers and get a notification when one of your favorite streams goes online. Twitch Tool keeps users updated to the Twitch game even outside of website. ",
+  "author": "Célian BASTIEN",
+  "version": "1.0",
+  "permissions": [ "webRequest", "notifications", "storage","https://api.twitch.tv/kraken/"],
+  "background" :{
+    "scripts": ["js/app.js"]
+  },
+  "browser_action": {
+    "default_icon": {
+      "32": "img/icon32.png",
+      "64": "img/icon64.png",
+      "72": "img/icon72.png"
+    },
+    "default_title": "Twitch Tool",
+    "default_popup": "html/popup.html"
+  },
+  "icons":{
+      "32": "img/icon32.png",
+      "64": "img/icon64.png",
+      "72": "img/icon72.png",
+      "128": "img/icon72.png"
+  }
+}
