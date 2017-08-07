@@ -52,11 +52,24 @@ function BuildList(Streamer) {
     var spanDesc = document.createElement('span');
     spanDesc.className = 'descr';
     spanDesc.textContent = "OFFLINE";
-    var divCheck = document.createElement('div');
-    divCheck.className = 'notifdiv';
-    var Check = document.createElement('input');
-    Check.type = 'checkbox';
-    Check.checked=true;//notif
+    var divNotif = document.createElement('div');
+    divNotif.className = 'notifdiv';
+    var Notif = document.createElement('img');
+    Notif.src = '../img/alarmON.png';
+    Notif.style.cursor='pointer';
+    Notif.style.marginTop= '-8px';
+    Notif.onclick=function(){
+        if (this.src.indexOf("OFF.png")!=-1){
+            //si OFF 
+            this.src= '../img/alarmON.png';
+            //delete var;
+            deleteNoNotif(Streamer.name)
+        }
+        else{
+            this.src= '../img/alarmOFF.png';
+            addNonotif(Streamer.name)
+        }
+    }
     if (Streamer.isLive) {
         spanName.textContent += ' [LIVE] sur ' + Streamer.game + ' (' + Streamer.viewers + ' viewers)';
         spanDesc.textContent = Streamer.description;
@@ -68,12 +81,25 @@ function BuildList(Streamer) {
     divText.appendChild(spanName);
     divText.appendChild(document.createElement("br"));
     divText.appendChild(spanDesc);
-    divCheck.appendChild(Check);
+    divNotif.appendChild(Notif);
     li.appendChild(img);
     li.appendChild(divText);
-    li.appendChild(divCheck);
+    li.appendChild(divNotif);
     ListStreams.appendChild(li);
 }
 function OpenStream(userName){
     chrome.tabs.create({ url: 'https://www.twitch.tv/' + userName }, function (tab) { });
+}
+function deleteNoNotif(name){
+
+}
+
+function addNonotif(name){
+    chrome.storage.local.get({nameKey: []}, function (result) {
+    chrome.storage.local.set({nameKey: nameKey}, function () {
+        chrome.storage.local.get('nameKey', function (result) {
+            console.log(result.nameKey)
+        });
+    });
+});
 }
