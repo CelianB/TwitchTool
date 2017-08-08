@@ -8,20 +8,6 @@
         'Streamers': []
     }
 
-    AlertLive.prototype.getViewers = function (user) {
-        return new Promise(function (resolve, reject) {
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://api.twitch.tv/kraken/streams/' + user + '&client_id=' + this.clientId);
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState != 4 || xhr.status != 200) return;
-                var stream = JSON.parse(xhr.responseText).stream;
-                if (stream) resolve(stream.viewers);
-                else resolve(0);
-            }
-            xhr.send();
-        })
-    }
-
     AlertLive.prototype.getUserFollowedChannels = async function (user) {
         Param.Streamers = [];
         return new Promise((resolve, reject) => {
@@ -46,7 +32,7 @@
                                 isLive: false,
                                 viewers: 0
                             }
-                            if (stream.stream != null) {
+                            if (stream.stream) {
                                 Streamer.isLive = true;
                                 Streamer.description = stream.stream.channel.status;
                                 Streamer.game = stream.stream.game;
@@ -63,6 +49,20 @@
                         xxhr[i].send();
                     })(i);
                 }
+            }
+            xhr.send();
+        })
+    }
+
+    AlertLive.prototype.IsOnline = async function (user) {
+        return new Promise(function (resolve, reject) {
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'https://api.twitch.tv/kraken/streams/' + user + '?&client_id=' + Param.clientId);
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState != 4 || xhr.status != 200) return;
+                var stream = JSON.parse(xhr.responseText).stream;
+                if (stream) return (true);
+                else resolve(false);
             }
             xhr.send();
         })

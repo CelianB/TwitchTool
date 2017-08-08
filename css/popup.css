@@ -43,16 +43,16 @@ a{
 }
 .streamers li{
     border-top: 1px solid #999797;
-    background-color: silver;
     width: 100%;
     display: flex;
     height: 40px;
 }
+
 .live{
     background-color: #f2e7ac;
 }
 .live:hover{
-    background-color: goldenrod;;
+    background-color: goldenrod;
 }
 
 .streamers li:first-child{
