@@ -28,7 +28,6 @@
                                 display_name: follows.follows[i].channel.display_name,
                                 name: follows.follows[i].channel.name,
                                 img: follows.follows[i].channel.logo || 'https://static-cdn.jtvnw.net/jtv_user_pictures/xarth/404_user_70x70.png',
-                                notif: true,
                                 isLive: false,
                                 viewers: 0
                             }
@@ -37,6 +36,9 @@
                                 Streamer.description = stream.stream.channel.status;
                                 Streamer.game = stream.stream.game;
                                 Streamer.viewers = stream.stream.viewers;
+                            }
+                            if (Streamer.name == "twitchstreamerss") {
+                                console.log('');
                             }
                             Param.Streamers.push(Streamer);
                             if (Param.Streamers.length == follows.follows.length - 1) {
@@ -61,12 +63,11 @@
             xhr.onreadystatechange = function () {
                 if (xhr.readyState != 4 || xhr.status != 200) return;
                 var stream = JSON.parse(xhr.responseText).stream;
-                if (stream) return (true);
+                if (stream) resolve(true);
                 else resolve(false);
             }
             xhr.send();
         })
     }
-
     window.AlertLive = new AlertLive();
 })();

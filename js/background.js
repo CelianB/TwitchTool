@@ -88,7 +88,7 @@ function BuildList(Streamer) {
         divText.onclick = function () { OpenStream(Streamer.name) };
         img.onclick = function () { OpenStream(Streamer.name) };
     }
-    else li.style.backgroundColor='silver';
+    else li.style.backgroundColor = 'silver';
     divText.appendChild(spanName);
     divText.appendChild(document.createElement("br"));
     divText.appendChild(spanDesc);
@@ -122,23 +122,31 @@ function updateLives(streamers) {
     ListStreams.querySelectorAll('.ripple:not(.live)').forEach((elem) => {
         Offlines.push(elem.getElementsByClassName('name')[0].innerText);
     });
-    var test=true;
-    streamers.forEach(function (e) {
-        if (Offlines.indexOf(e.name) !== -1) {
-            var Live = AlertLive.IsOnline(e.name).then(function (isLive) {
-                if (isLive) {
-                   // chrome.browserAction.setBadgeText({ "text": e.display_name + " est en live !" });
-                    var opt = {
-                        type: "basic",
-                        title: e.display_name,
-                        message: e.display_name + " est en live !",
-                        //iconUrl: e.img,
-                        iconUrl: '../img/icon64.png',
-                        isClickable: true
-                    };
-                    chrome.notifications.create('notifyON', opt, function (id) { });
+    var test = true;
+    chrome.storage.local.get('streamer', (r) => {
+        var streamer = r.streamer;  
+        streamers.forEach(function (e) {
+            if (streamer.indexOf(e.name) == -1) {
+                if (Offlines.indexOf(e.display_name) !== -1) {
+                    var Live = AlertLive.IsOnline(e.name).then(function (isLive) {
+                        if (e.name=="twitchstreamerss"){
+                            console.log('');
+                        }
+                        if (isLive) {
+                            chrome.browserAction.setBadgeText({ "text": "" });
+                            var opt = {
+                                type: "basic",
+                                title: e.display_name,
+                                message: e.display_name + " est en live !",
+                                //iconUrl: e.img,
+                                iconUrl: '../img/icon64.png',
+                                isClickable: true
+                            };
+                            chrome.notifications.create('notifyON', opt, function (id) { });
+                        }
+                    });
                 }
-            });
-        }
+            }
+        });
     });
 }
