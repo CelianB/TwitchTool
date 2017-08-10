@@ -1,27 +1,23 @@
 (function () {
-    var AlertLive = function () {
-    };
-
+    var AlertLive = function () { };
     var Param = {
         'clientId': 'qvr80zol9glws9vufdzujixvqg0oqs',
         'redirectUri': 'https://cbilfoloagcnhpgpjhojjfigjdpoflmg.chromiumapp.org/oauth2',
-        'Streamers': []
     }
-
-    AlertLive.prototype.getUserFollowedChannels = async function (user) {
-        Param.Streamers = [];
-        return new Promise((resolve, reject) => {
+    AlertLive.prototype.getUserFollowedChannels = user => {
+        streamers=[];
+        return new Promise(resolve => {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'https://api.twitch.tv/kraken/users/' + user + '/follows/channels?client_id=' + Param.clientId + '?&limit=100', true);
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = () => {
                 if (xhr.readyState != 4 || xhr.status != 200) return;
                 var follows = JSON.parse(xhr.responseText);
                 var xxhr = [];
                 for (var i = 0; i < follows.follows.length; i++) {
-                    (function (i) {
+                    ((i) => {
                         xxhr[i] = new XMLHttpRequest();
                         xxhr[i].open('GET', 'https://api.twitch.tv/kraken/streams/' + follows.follows[i].channel.name + '?client_id=' + Param.clientId, true);
-                        xxhr[i].onreadystatechange = function () {
+                        xxhr[i].onreadystatechange = () => {
                             if (xxhr[i].readyState != 4 || xxhr[i].status != 200) return;
                             var stream = JSON.parse(xxhr[i].responseText);
                             var Streamer = {
@@ -37,15 +33,12 @@
                                 Streamer.game = stream.stream.game;
                                 Streamer.viewers = stream.stream.viewers;
                             }
-                            if (Streamer.name == "twitchstreamerss") {
-                                console.log('');
-                            }
-                            Param.Streamers.push(Streamer);
-                            if (Param.Streamers.length == follows.follows.length - 1) {
-                                Param.Streamers = Param.Streamers.sort(function (a, b) {
+                            streamers.push(Streamer);
+                            if (streamers.length == follows.follows.length - 1) {
+                                streamers = streamers.sort((a, b) => {
                                     return b.isLive - a.isLive || b.viewers - a.viewers || b.name - a.name;
                                 })
-                                resolve(Param.Streamers);
+                                resolve(streamers);
                             }
                         }
                         xxhr[i].send();
@@ -56,11 +49,11 @@
         })
     }
 
-    AlertLive.prototype.IsOnline = async function (user) {
-        return new Promise(function (resolve, reject) {
+    AlertLive.prototype.IsOnline = user => {
+        return new Promise(resolve => {
             var xhr = new XMLHttpRequest();
             xhr.open('GET', 'https://api.twitch.tv/kraken/streams/' + user + '?&client_id=' + Param.clientId);
-            xhr.onreadystatechange = function () {
+            xhr.onreadystatechange = () => {
                 if (xhr.readyState != 4 || xhr.status != 200) return;
                 var stream = JSON.parse(xhr.responseText).stream;
                 if (stream) resolve(true);
@@ -69,5 +62,39 @@
             xhr.send();
         })
     }
+
+    AlertLive.prototype.updateLives = (Offlines) => {
+        chrome.storage.local.get('streamer', (r) => {
+            var streamer = r.streamer;
+            Offlines.forEach(e => {
+                if (streamer.indexOf(e.name) == -1) {
+                    var Live = AlertLive.prototype.IsOnline(e.name).then(isLive => {
+                        if (isLive) {
+                            chrome.browserAction.setBadgeText({ "text": "" });
+                            var opt = {
+                                type: "basic",
+                                title: e.display_name,
+                                message: e.display_name + " est en live !",
+                                iconUrl: e.img,
+                                //iconUrl: '../img/icon64.png',
+                                isClickable: true
+                            };
+                            chrome.notifications.create('notifyON', opt, function (id) { });
+                        }
+                    });
+                }
+            });
+        });
+    }
+    setInterval(() => {
+        var Isliveonly = stream => stream.isLive == false;
+        chrome.storage.local.get('TwitchUserName', r => {
+            AlertLive.prototype.getUserFollowedChannels(r.TwitchUserName).then(s=>{
+                 AlertLive.prototype.updateLives(s.filter(Isliveonly));
+                }
+            );
+        });
+       
+    }, 60000);
     window.AlertLive = new AlertLive();
 })();

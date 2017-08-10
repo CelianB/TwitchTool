@@ -49,10 +49,10 @@ a{
 }
 
 .live{
-    background-color: #f2e7ac;
+    background-color: aliceblue;
 }
 .live:hover{
-    background-color: goldenrod;
+    background-color: #f1e2f8;
 }
 
 .streamers li:first-child{
