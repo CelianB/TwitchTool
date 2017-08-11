@@ -27,6 +27,7 @@ const SaveUserName = username => {
     }
 }
 async function Update(Username) {
+    ListStreams.innerHTML='';
     var Streams = await AlertLive.getUserFollowedChannels(Username).then(val => {
         StreamList = val;
         val.forEach(Streamer => BuildList(Streamer), this);
@@ -60,13 +61,13 @@ const BuildList = Streamer => {
     Notif.src = '../img/alarmON.png';
     Notif.style.cursor = 'pointer';
     Notif.style.marginTop = '-8px';
-    Notif.onclick = () => {
-        if (this.src.indexOf("OFF.png") != -1) {
-            this.src = '../img/alarmON.png';
+    Notif.onclick = (e) => {
+        if (e.path[0].src.indexOf("OFF.png") != -1) {
+            e.path[0].src = '../img/alarmON.png';
             deleteNoNotif(Streamer.name)
         }
         else {
-            this.src = '../img/alarmOFF.png';
+            e.path[0].src= '../img/alarmOFF.png';
             addNonotif(Streamer.name)
         }
     }
@@ -75,10 +76,10 @@ const BuildList = Streamer => {
         spanDesc.textContent = Streamer.description;
         spanDesc.title = Streamer.description;
         li.className += " live";
-        divText.onclick = () => OpenStream(Streamer.name);
-        img.onclick = () => OpenStream(Streamer.name);
     }
     else li.style.backgroundColor = '#e2e0e0';
+    divText.onclick = () => OpenStream(Streamer.name);
+    img.onclick = () => OpenStream(Streamer.name);
     divText.appendChild(spanName);
     divText.appendChild(document.createElement("br"));
     divText.appendChild(spanDesc);
