@@ -29,7 +29,7 @@
                                 viewers: 0,
                                 notified: false
                             }
-                            if (stream.stream) {
+                            if (stream.stream && stream.stream.stream_type=="live") {
                                 Streamer.isLive = true;
                                 Streamer.description = stream.stream.channel.status;
                                 Streamer.game = stream.stream.game;
