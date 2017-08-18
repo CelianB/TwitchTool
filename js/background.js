@@ -1,5 +1,6 @@
 const username = document.querySelector('#username');
 const search = document.querySelector('#search');
+const allowNotif=document.querySelector('#allowNotif');
 const ListStreams = document.querySelector('.streamers');
 var StreamList;
 
@@ -12,12 +13,28 @@ username.onkeydown = e => {
     if (e.keyCode == 13) SaveUserName(username.value);
 };
 
+allowNotif.onchange = that => {
+    let notifON=that.target.checked
+    chrome.storage.local.set({ 'TwitchToolNotif':notifON});
+    for (var elem of ListStreams.children){
+        if (notifON)elem.getElementsByClassName("notifdiv")[0].firstChild.src = '../img/alarmON.png';
+        else elem.getElementsByClassName("notifdiv")[0].firstChild.src = '../img/alarmOFF.png';
+    }
+};
+
 search.onclick = () => SaveUserName(username.value);
+
 
 window.onload = () => {
     chrome.storage.local.get('TwitchUserName', r => {
+        if (r.TwitchUserName===undefined)
+            r.TwitchUserName="Twitch";
         username.value = r.TwitchUserName;
         Update(r.TwitchUserName);
+    });
+    chrome.storage.local.get('TwitchToolNotif', r => {
+        if (r.TwitchToolNotif===undefined)r.TwitchToolNotif=true;
+        allowNotif.checked=r.TwitchToolNotif;
     });
 }
 const SaveUserName = username => {
@@ -33,7 +50,7 @@ async function Update(Username) {
         val.forEach(Streamer => BuildList(Streamer), this);
         chrome.storage.local.get('streamer', (r) => {
             val.forEach((Streamer, i) => {
-                if (r.streamer.indexOf(Streamer.name) !== -1)
+                if (r.streamer!=undefined && r.streamer.indexOf(Streamer.name) !== -1)
                     ListStreams.children[i].getElementsByClassName("notifdiv")[0].firstChild.src = '../img/alarmOFF.png';
             }, this);
         });
@@ -101,6 +118,7 @@ const deleteNoNotif = name => {
 const addNonotif = name => {
     chrome.storage.local.get('streamer', (r) => {
         var streamer = r.streamer;
+        if (streamer==undefined)streamer=[];
         if (streamer.indexOf(name) == -1) {
             streamer.push(name)
             chrome.storage.local.set({ streamer: streamer });

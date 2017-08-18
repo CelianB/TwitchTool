@@ -29,7 +29,7 @@
                                 viewers: 0,
                                 notified: false
                             }
-                            if (stream.stream && stream.stream.stream_type=="live") {
+                            if (stream.stream && stream.stream.stream_type == "live") {
                                 Streamer.isLive = true;
                                 Streamer.description = stream.stream.channel.status;
                                 Streamer.game = stream.stream.game;
@@ -62,7 +62,7 @@
         chrome.storage.local.get('streamer', (r) => {
             var NoNotifStreamer = r.streamer;
             Onlines.forEach(e => {
-                if (NoNotifStreamer.indexOf(e.name) && (e.notified == false)) {
+                if ((NoNotifStreamer == undefined || NoNotifStreamer.indexOf(e.name) == -1) && (e.notified == false)) {
                     Param.notified.push(e.name);
                     var opt = {
                         type: "basic",
@@ -72,18 +72,23 @@
                         iconUrl: '../img/icon64.png',
                         isClickable: true
                     };
-                    chrome.notifications.onClicked.addListener(() => chrome.tabs.create({ url: 'https://www.twitch.tv/' + e.name }));
-                    chrome.notifications.create('notifyON', opt, function (id) { });
+                    chrome.notifications.create(e.name, opt);
                 }
             });
         });
     }
 
+    chrome.notifications.onClicked.addListener(id=>{
+        chrome.tabs.create({url:"https://www.twitch.tv/"+id});
+    });
+
     AlertLive.prototype.Updator = () => {
         var IsOnline = stream => stream.isLive == true;
         chrome.storage.local.get('TwitchUserName', r => {
             AlertLive.prototype.getUserFollowedChannels(r.TwitchUserName).then(s => {
-                AlertLive.prototype.updateLives(s.filter(IsOnline));
+                chrome.storage.local.get('TwitchToolNotif', r => {
+                    if(r.TwitchToolNotif)AlertLive.prototype.updateLives(s.filter(IsOnline));
+                });
             });
         });
     }
