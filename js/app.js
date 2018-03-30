@@ -9,7 +9,7 @@
         streamers = [];
         return new Promise(resolve => {
             var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'https://api.twitch.tv/kraken/users/' + user + '/follows/channels?client_id=' + Param.clientId + '?&limit=100', true);
+            xhr.open('GET', 'https://api.twitch.tv/kraken/users/' + user + '/follows/channels?&limit=100&client_id=' + Param.clientId, true);
             xhr.onreadystatechange = () => {
                 if (xhr.readyState != 4 || xhr.status != 200) return;
                 var follows = JSON.parse(xhr.responseText);
@@ -79,7 +79,7 @@
     }
 
     chrome.notifications.onClicked.addListener(id=>{
-        chrome.tabs.create({url:"https://www.twitch.tv/"+id});
+        chrome.tabs.create({url:"https://www.twitch.tv/okazumaa"});
     });
 
     AlertLive.prototype.Updator = () => {

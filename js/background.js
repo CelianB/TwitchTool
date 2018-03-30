@@ -75,7 +75,7 @@ const BuildList = Streamer => {
     var divNotif = document.createElement('div');
     divNotif.className = 'notifdiv';
     var Notif = document.createElement('img');
-    Notif.src = '../img/alarmON.png';
+    Notif.src = '../img/alarmOFF.png';
     Notif.style.cursor = 'pointer';
     Notif.style.marginTop = '-8px';
     Notif.onclick = (e) => {
