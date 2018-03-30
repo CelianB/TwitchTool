@@ -4,7 +4,7 @@
   "name": "Twitch Notif",
   "description": "Track your favorite streamers and get a notification when one goes online. Twitch Tool keeps you updated to the Twitch game.",
   "author": "Célian BASTIEN",
-  "version": "2.1",
+  "version": "2.4",
   "permissions": [ "webRequest", "notifications", "storage","https://api.twitch.tv/kraken/"],
   "background" :{
     "scripts": ["js/app.js"]
